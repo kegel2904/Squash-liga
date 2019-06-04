@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
@@ -40,15 +41,21 @@
             <TextField fx:id="imeUnos" layoutX="335.0" layoutY="126.0" />
             <TextField fx:id="prezimeUnos" layoutX="335.0" layoutY="174.0" />
             <TextField fx:id="emailUnos" layoutX="335.0" layoutY="216.0" />
-            <Button layoutX="196.0" layoutY="368.0" mnemonicParsing="false" onAction="#registrirajIgraca" text="Registriraj me!" />
+            <Button layoutX="196.0" layoutY="400.0" mnemonicParsing="false" onAction="#registrirajIgraca" text="Registriraj me!" />
             <Text layoutX="196.0" layoutY="325.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Korisničko ime:">
                <font>
                   <Font size="16.0" />
                </font>
             </Text>
             <TextField fx:id="korisnickoImeUnos" layoutX="335.0" layoutY="307.0" />
-            <Button layoutX="363.0" layoutY="368.0" mnemonicParsing="false" onAction="#prijava" text="Već imam profil!" />
+            <Button layoutX="363.0" layoutY="400.0" mnemonicParsing="false" onAction="#prijava" text="Već imam profil!" />
             <DatePicker fx:id="datumUnos" layoutX="335.0" layoutY="263.0" />
+            <Text layoutX="196.0" layoutY="362.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lozinka:">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Text>
+            <PasswordField fx:id="lozinkaUnos" layoutX="335.0" layoutY="343.0" />
          </children>
       </Pane>
    </center>
