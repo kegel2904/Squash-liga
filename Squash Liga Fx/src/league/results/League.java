@@ -9,11 +9,13 @@ public class League {
 	private final String name;
 	private final List<Player> players;
 	private final List<Match> matches;
+	private final PointCriteria points;
 
-	League(String name) {
+	League(String name, PointCriteria points) {
 		this.name = Objects.requireNonNull(name);
 		this.players = new ArrayList<>();
 		this.matches = new ArrayList<>();
+		this.points = Objects.requireNonNull(points);
 	}
 
 	public String name() {
@@ -26,6 +28,10 @@ public class League {
 
 	public List<Match> matches() {
 		return new ArrayList<>(matches);
+	}
+
+	public PointCriteria points() {
+		return points;
 	}
 
 	void addMatch(Match match) {

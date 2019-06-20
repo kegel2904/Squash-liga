@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import league.results.PointCriteria.Item;
 import league.util.XmlNode;
 import league.util.XmlNode.XmlException;
 
@@ -29,6 +30,11 @@ public class XmlInput {
 	private static final String SECOND = "second";
 	private static final String RESULT = "result";
 	private static final String LEAGUE = "league";
+	private static final String POINTS = "points";
+	private static final String MATCH_PLAYED = "match_played";
+	private static final String GAME_WON = "game_won";
+	private static final String MATCH_WON = "match_won";
+	private static final String COUNT = "count";
 
 	public static History read(String filename) throws IOException {
 		try (InputStream input = new FileInputStream(filename)) {
@@ -59,11 +65,28 @@ public class XmlInput {
 				throw new IOException(old + "-" + player);
 		}
 
+		IdRegister<PointCriteria> pointsById = new IdRegister<>();
+		for (XmlNode pointsNode : root.children(POINTS)) {
+			String id = extract(pointsNode, NAME);
+			int matchWon = pointCount(pointsNode, MATCH_WON);
+			int gameWon = pointCount(pointsNode, GAME_WON);
+			int matchPlayed = pointCount(pointsNode, MATCH_PLAYED);
+			PointCriteria points = PointCriteria.newBuilder()
+					.set(Item.GAME_WON, gameWon)
+					.set(Item.MATCH_WON, matchWon)
+					.set(Item.MATCH_PLAYED, matchPlayed)
+					.build();
+			pointsById.register(id, points);
+		}
+
 		List<League> leagues = new ArrayList<>();
 
 		for (XmlNode leagueNode : root.children(LEAGUE)) {
 			String name = extract(leagueNode, NAME);
-			League league = new League(name);
+			String pointsId = extract(leagueNode, POINTS);
+			PointCriteria points = pointsById.get(pointsId);
+
+			League league = new League(name, points);
 			Set<String> ids = new HashSet<>();
 			for (XmlNode playerNode : leagueNode.children(PLAYER)) {
 				String id = extract(playerNode, ID);
@@ -111,19 +134,70 @@ public class XmlInput {
 		return new History(byId.values(), leagues);
 	}
 
-	private static int value(Matcher matcher, int group) throws IOException {
+	private static int pointCount(XmlNode parent, String child) {
+		XmlNode node = parent.onlyChild(child);
+		if (node == null)
+			return 0;
+		String countString = extract(node, COUNT);
 		try {
-			return Integer.parseInt(matcher.group(group));
+			return Integer.parseInt(countString);
 		} catch (NumberFormatException e) {
-			throw new IOException(e);
+			throw new InputException(countString);
 		}
 	}
 
-	private static String extract(XmlNode node, String attribute) throws IOException {
+	private static int value(Matcher matcher, int group) {
+		String value = matcher.group(group);
+		try {
+			return Integer.parseInt(value);
+		} catch (NumberFormatException e) {
+			throw new InputException(value);
+		}
+	}
+
+	private static String extract(XmlNode node, String attribute) {
 		String value = node.attribute(attribute);
 		if (value == null)
-			throw new IOException(attribute);
+			throw new InputException(attribute);
 		return value;
+	}
+
+	private static class IdRegister<T> {
+		private final Map<String, T> map = new LinkedHashMap<>();
+
+		void register(String id, T object) {
+			if (object == null)
+				throw new InputException(id);
+			T old = map.putIfAbsent(id, object);
+			if (old != null)
+				throw new InputException(id + "," + old + "," + object);
+		}
+
+		T get(String id) {
+			T value = map.get(id);
+			if (value == null)
+				throw new InputException(id);
+			return value;
+		}
+
+		List<T> elements() {
+			return new ArrayList<>(map.values());
+		}
+
+	}
+
+	private static class InputException extends RuntimeException {
+
+		private static final long serialVersionUID = 1L;
+
+		InputException(Throwable t) {
+			super(t);
+		}
+
+		InputException(String s) {
+			super(s);
+		}
+
 	}
 
 }

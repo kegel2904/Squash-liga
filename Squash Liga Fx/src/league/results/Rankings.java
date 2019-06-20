@@ -54,7 +54,11 @@ public class Rankings {
 
 	}
 
-	public static Rankings from(League league, PointCriteria criteria) {
+	public static Rankings from(League league) {
+		return from(league, league.points());
+	}
+
+	private static Rankings from(League league, PointCriteria criteria) {
 		Map<Player, Counter> byPlayer = new HashMap<>();
 
 		for (Player player : league.players())

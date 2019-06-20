@@ -3,7 +3,7 @@ package league.results;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class PointCriteria {
+class PointCriteria {
 
 	public enum Item {
 		MATCH_WON,
@@ -11,11 +11,11 @@ public class PointCriteria {
 		GAME_WON
 	}
 
-	public static Builder newBuilder() {
+	static Builder newBuilder() {
 		return new Builder();
 	}
 
-	public static class Builder {
+	static class Builder {
 
 		private final Map<Item, Integer> points;
 
@@ -23,12 +23,12 @@ public class PointCriteria {
 			this.points = new EnumMap<>(Item.class);
 		}
 
-		public Builder set(Item item, int count) {
+		Builder set(Item item, int count) {
 			points.put(item, count);
 			return this;
 		}
 
-		public PointCriteria build() {
+		PointCriteria build() {
 			return new PointCriteria(points);
 		}
 
@@ -42,7 +42,7 @@ public class PointCriteria {
 		this.points = helper;
 	}
 
-	public int points(Item item) {
+	int points(Item item) {
 		return points.getOrDefault(item, 0);
 	}
 

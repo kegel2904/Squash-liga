@@ -3,13 +3,12 @@ package league.visual;
 import java.io.IOException;
 
 import javafx.application.Application;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import league.results.History;
-import league.results.PointCriteria;
-import league.results.PointCriteria.Item;
 import league.results.XmlInput;
+import league.visual.util.Stretch;
 
 public class Start extends Application {
 
@@ -24,15 +23,12 @@ public class Start extends Application {
 	@Override
 	public void start(Stage stage) {
 
-		PointCriteria criteria = PointCriteria.newBuilder()
-				.set(Item.GAME_WON, 1)
-				.set(Item.MATCH_PLAYED, 1)
-				.set(Item.MATCH_WON, 1)
-				.build();
+		Overview overview = new Overview(history);
 
-		Overview overview = new Overview(history, criteria);
+		HBox box = new HBox(overview.view());
+		Stretch.horizontal(overview.view());
 
-		Scene scene = new Scene((Parent) overview.view());
+		Scene scene = new Scene(box);
 		stage.setScene(scene);
 		stage.setTitle("League statistics");
 		stage.setWidth(600);
